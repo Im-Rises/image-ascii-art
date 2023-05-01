@@ -2,8 +2,15 @@
   "name": "image-ascii-art",
   "version": "1.0.3",
   "description": "Convert image to ascii art",
-  "repository": "https://github.com/Im-Rises/image-ascii-art",
-  "author": "Im-Rises (Quentin MOREL)",
+  "homepage": "https://im-rises.github.io/image-ascii-art-website",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Im-Rises/image-ascii-art"
+  },
+  "author": {
+    "name": "Im-Rises",
+    "email": "quentin-morel88@hotmail.com"
+  },
   "private": false,
   "license": "MIT",
   "publishConfig": {
