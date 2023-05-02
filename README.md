@@ -105,7 +105,8 @@ The `parentRef` is used to fit the ascii art in the parent element, so you need 
 element like a `div`, you can check the example to see how to use it.
 
 > **Warning**  
-> Be careful when using this package, the camera must be working before enabling the Image stream.
+> Be careful when using this package, the image must be loaded before enabling the Image Ascii component, otherwise it
+> will not work.
 > If you want to set the ascii art with a correct aspect ratio, follow the examples (webcam or Image player).
 
 The `artType` is used to choose the type of the ascii art, you can choose between `ASCII`, `ASCII_COLOR`
