@@ -3,7 +3,7 @@ import {asciiChars} from '../constants/pixel-ascii';
 import {
 	calculateAndSetFontSize, canvasImgToUrl,
 	getAsciiFromImage,
-	getAsciiFromImageColor,
+	getAsciiFromImageColor, lineHeight,
 	lineSpacing,
 } from '../canvas-handler/image-canvas-ascii';
 
@@ -22,12 +22,14 @@ type Props = {
 	backgroundColor: string;
 	artType: ArtTypeEnum;
 	preTagRef?: React.RefObject<HTMLPreElement>;
+	flipY?: boolean;
 };
 
 export const ImageAscii = (props: Props) => {
 	const canvasVideoBufferRef = useRef<HTMLCanvasElement>(null);
 	const preTagRef = props.preTagRef ?? useRef<HTMLPreElement>(null);
 	const imageRef = useRef<HTMLImageElement>(null);
+	const flipY = props.flipY ?? false;
 
 	const [asciiText, setAsciiText] = useState('');
 
@@ -70,7 +72,7 @@ export const ImageAscii = (props: Props) => {
 			case ArtTypeEnum.ASCII_COLOR_BG_IMAGE:
 				setAsciiText(getAsciiFromImage(imageData, asciiChars));
 				preTagRef.current!.style.backgroundImage = `url(${canvasImgToUrl(canvas).src})`;
-				// preTagRef.current!.style.backgroundImage = `url(${videoImgToUrl(props.videoStreaming).src})`;
+				// preTagRef.current!.style.backgroundImage = `url(${props.imageSrc})`;
 				break;
 			default:
 				break;
@@ -98,6 +100,9 @@ export const ImageAscii = (props: Props) => {
 									padding: 0,
 									margin: 0,
 									letterSpacing: `${lineSpacing}em`,
+									lineHeight: `${lineHeight}em`,
+									transform: `scaleX(${flipY ? -1 : 1})`,
+									overflow: 'hidden',
 								}}>
 									{asciiText}
 								</pre>
@@ -111,25 +116,39 @@ export const ImageAscii = (props: Props) => {
 										padding: 0,
 										margin: 0,
 										letterSpacing: `${lineSpacing}em`,
+										lineHeight: `${lineHeight}em`,
+										transform: `scaleX(${flipY ? -1 : 1})`,
+										overflow: 'hidden',
 									}}
 								></pre>
 							);
 						case ArtTypeEnum.ASCII_COLOR_BG_IMAGE:
 							return (
-								<div style={{width: '100%', height: '100%'}}>
+								<span>
+									{
+										/*
+                                        This span is important for the browser, it helps differentiate
+                                        the other pre tag from the one with the background image when
+                                        toggling the artType. If the pre tag is not present, the browser
+                                        might think that the change of pre tag is an update not a replace
+                                         */
+									}
 									<pre ref={preTagRef} style={{
 										padding: 0,
 										margin: 0,
 										letterSpacing: `${lineSpacing}em`,
-										backgroundSize: 'cover',
+										lineHeight: `${lineHeight}em`,
+										backgroundSize: '100% 100%',
 										backgroundClip: 'text',
 										WebkitBackgroundClip: 'text',
 										color: 'transparent',
+										transform: `scaleX(${flipY ? -1 : 1})`,
+										overflow: 'hidden',
 										// backgroundImage: `url(${props.videoStreaming.src})`,
 									}}>
 										{asciiText}
 									</pre>
-								</div>
+								</span>
 							);
 						default:
 							return (<p>ERROR</p>);
