@@ -7,7 +7,7 @@ const ImageAsciiPanel = () => {
 	// Define the ascii art chars per line
 	const charsPerLine = 200;
 	const [charsPerColumn, setCharsPerColumn] = useState(0);
-	const [imageSrc, setImageSrc] = useState('');
+	const [image, setImage] = useState<HTMLImageElement>();
 	const [isImageReady, setIsImageReady] = useState(false);
 
 	const preTagRef = useRef<HTMLPreElement>(null);
@@ -27,24 +27,32 @@ const ImageAsciiPanel = () => {
 	};
 
 	const handleImageChange = () => {
-		if (inputRef.current?.files?.length) {
-			const file = inputRef.current.files[0];
-			const reader = new FileReader();
-			reader.onload = () => {
-				if (reader.result !== '') {
-					setImageSrc(reader.result as string);
+		// Create image from ImageDemo
+		const img = new Image();
+		img.src = ImageDemo;
+		img.onload = () => {
+			setCharsPerColumn(calculateCharsPerColumn(img));
+			setIsImageReady(true);
+			setImage(img);
+		};
 
-					const img = new Image();
-					img.src = reader.result as string;
-					img.onload = () => {
-						setCharsPerColumn(calculateCharsPerColumn(img));
-						setIsImageReady(true);
-					};
-				}
-			};
-
-			reader.readAsDataURL(file);
-		}
+		// if (inputRef.current?.files?.length) {
+		// 	const file = inputRef.current.files[0];
+		// 	const reader = new FileReader();
+		// 	reader.onload = () => {
+		// 		if (reader.result !== '') {
+		// 			const img = new Image();
+		// 			img.src = reader.result as string;
+		// 			img.onload = () => {
+		// 				setCharsPerColumn(calculateCharsPerColumn(img));
+		// 				setIsImageReady(true);
+		// 				setImage(img);
+		// 			};
+		// 		}
+		// 	};
+		//
+		// 	reader.readAsDataURL(file);
+		// }
 	};
 
 	// Tags of the webcam and video ascii element
@@ -58,7 +66,9 @@ const ImageAsciiPanel = () => {
 				{
 					isImageReady
 						? (
-							<ImageAscii imageSrc={imageSrc} parentRef={parentRef}
+							<ImageAscii
+								image={image!}
+								parentRef={parentRef}
 								artType={ArtTypeEnum.ASCII_COLOR_BG_IMAGE}
 								charsPerLine={charsPerLine}
 								charsPerColumn={charsPerColumn}

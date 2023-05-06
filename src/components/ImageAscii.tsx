@@ -14,7 +14,7 @@ export enum ArtTypeEnum {
 }
 
 type Props = {
-	imageSrc: string;
+	image: HTMLImageElement;
 	parentRef: React.RefObject<HTMLElement>;
 	charsPerLine: number;
 	charsPerColumn: number;
@@ -28,7 +28,7 @@ type Props = {
 export const ImageAscii = (props: Props) => {
 	const canvasVideoBufferRef = useRef<HTMLCanvasElement>(null);
 	const preTagRef = props.preTagRef ?? useRef<HTMLPreElement>(null);
-	const imageRef = useRef<HTMLImageElement>(null);
+	// const imageRef = useRef<HTMLImageElement>(null);
 	const flipY = props.flipY ?? false;
 
 	const [asciiText, setAsciiText] = useState('');
@@ -52,15 +52,14 @@ export const ImageAscii = (props: Props) => {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [props.imageSrc, props.parentRef, props.charsPerLine, props.charsPerColumn, props.artType]);
+	}, [props.image, props.parentRef, props.charsPerLine, props.charsPerColumn, props.artType]);
 
 	const drawAsciiArt = () => {
 		const canvas = canvasVideoBufferRef.current!;
 		const context = canvas.getContext('2d', {willReadFrequently: true})!;
 
-		context.drawImage(imageRef.current!, 0, 0, canvas.width, canvas.height);
+		context.drawImage(props.image, 0, 0, canvas.width, canvas.height);
 		const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-		console.log(imageData);
 
 		switch (props.artType) {
 			case ArtTypeEnum.ASCII:
@@ -85,7 +84,7 @@ export const ImageAscii = (props: Props) => {
 			padding: 0, margin: 0, display: 'flex', justifyContent: 'center',
 			alignItems: 'center', width: '100%', height: '100%',
 		}}>
-			<img src={props.imageSrc} ref={imageRef} alt='image' onLoad={drawAsciiArt} style={{display: 'none'}}/>
+			{/* <img src={props.imageSrc} ref={imageRef} alt='image' onLoad={drawAsciiArt} style={{display: 'none'}}/> */}
 			<canvas ref={canvasVideoBufferRef} width={props.charsPerLine} height={props.charsPerColumn}
 				style={{display: 'none'}}
 			/>
