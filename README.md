@@ -22,6 +22,8 @@ The source code of the demo is available on GitHub:
 
 [Image Ascii Art](https://github.com/Im-Rises/image-ascii-art-website)
 
+This demo show you how to load a default image and how to load an image from your computer to convert it to ascii art.
+
 ## Video Stream version
 
 I also made a video stream version.
@@ -65,7 +67,7 @@ Then you can create use the Component like this in Typescript/JavaScript:
 
 ```js
 <ImageAscii
-    imageSrc={imageSrc}
+    image={image!}
     parentRef={parentRef}
     artType={ArtTypeEnum.ASCII_COLOR_BG_IMAGE}
     charsPerLine={charsPerLine}
@@ -79,7 +81,7 @@ You can also pass a pre tag reference to the component, so it can be used to get
 
 ```js
 <ImageAscii
-    imageSrc={imageSrc}
+    image={image!}
     parentRef={parentRef}
     artType={ArtTypeEnum.ASCII_COLOR_BG_IMAGE}
     charsPerLine={charsPerLine}
@@ -92,7 +94,7 @@ You can also pass a pre tag reference to the component, so it can be used to get
 
 To use the component, you need to pass the following props:
 
-- `imageSrc` - The source of the image.
+- `image` - The input HTMLImageElement.
 - `parentRef` - The reference of the parent element, to fit the ascii art in it.
 - `artType` - The type of the ascii art, you can choose between `ASCII`, `ASCII_COLOR` and `ASCII_COLOR_BG_IMAGE`.
 - `charsPerLine` - The number of characters per line.
@@ -107,7 +109,8 @@ element like a `div`, you can check the example to see how to use it.
 > **Warning**  
 > Be careful when using this package, the image must be loaded before enabling the Image Ascii component, otherwise it
 > will not work.
-> If you want to set the ascii art with a correct aspect ratio, follow the examples (webcam or Image player).
+> If you want to set the ascii art with a correct aspect ratio, follow the example at the link below:
+> [Image Ascii Art](https://im-rises.github.io/image-ascii-art-website/)
 
 The `artType` is used to choose the type of the ascii art, you can choose between `ASCII`, `ASCII_COLOR`
 and `ASCII_COLOR_BG_IMAGE`.
@@ -152,9 +155,6 @@ ESLint:
 
 GitHub gh-pages:  
 <https://github.com/gitname/react-gh-pages>
-
-react-webcam:  
-<https://www.npmjs.com/package/react-webcam>
 
 ## Links
 
