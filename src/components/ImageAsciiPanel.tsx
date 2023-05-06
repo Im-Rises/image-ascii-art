@@ -27,7 +27,27 @@ const ImageAsciiPanel = () => {
 	};
 
 	const handleImageChange = () => {
-		// Create image from ImageDemo
+		if (inputRef.current?.files?.length) {
+			const file = inputRef.current.files[0];
+			const reader = new FileReader();
+			reader.onload = () => {
+				if (reader.result !== '') {
+					const img = new Image();
+					img.src = reader.result as string;
+					img.onload = () => {
+						setCharsPerColumn(calculateCharsPerColumn(img));
+						setIsImageReady(true);
+						setImage(img);
+					};
+				}
+			};
+
+			reader.readAsDataURL(file);
+		}
+	};
+
+	// Default image
+	useEffect(() => {
 		const img = new Image();
 		img.src = ImageDemo;
 		img.onload = () => {
@@ -35,28 +55,8 @@ const ImageAsciiPanel = () => {
 			setIsImageReady(true);
 			setImage(img);
 		};
+	}, []);
 
-		// if (inputRef.current?.files?.length) {
-		// 	const file = inputRef.current.files[0];
-		// 	const reader = new FileReader();
-		// 	reader.onload = () => {
-		// 		if (reader.result !== '') {
-		// 			const img = new Image();
-		// 			img.src = reader.result as string;
-		// 			img.onload = () => {
-		// 				setCharsPerColumn(calculateCharsPerColumn(img));
-		// 				setIsImageReady(true);
-		// 				setImage(img);
-		// 			};
-		// 		}
-		// 	};
-		//
-		// 	reader.readAsDataURL(file);
-		// }
-	};
-
-	// Tags of the webcam and video ascii element
-	// Show the webcam only when it is ready, otherwise show a loading message
 	return (
 		<>
 			<div className={'Image-Ascii-Input'}>
