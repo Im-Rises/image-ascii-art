@@ -5,7 +5,7 @@ import {ImageAscii, ArtTypeEnum} from './ImageAscii';
 
 const ImageAsciiPanel = () => {
 	// Define the ascii art chars per line
-	const charsPerLine = 100;
+	const charsPerLine = 200;
 	const [charsPerColumn, setCharsPerColumn] = useState(0);
 	const [imageSrc, setImageSrc] = useState('');
 	const [isImageReady, setIsImageReady] = useState(false);
