@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState, createRef} from 'react';
 import {asciiChars} from '../constants/pixel-ascii';
 import {
 	calculateAndSetFontSize, canvasImgToUrl,
@@ -25,25 +25,30 @@ type Props = {
 	flipY?: boolean;
 };
 
-export const ImageAscii = (props: Props) => {
-	const canvasVideoBufferRef = useRef<HTMLCanvasElement>(null);
-	const preTagRef = props.preTagRef ?? useRef<HTMLPreElement>(null);
-	// const imageRef = useRef<HTMLImageElement>(null);
-	const flipY = props.flipY ?? false;
+const defaultProps = {
+	preTagRef: createRef<HTMLPreElement>(),
+	flipY: false,
+};
 
+export const ImageAscii = (props: Props) => {
+	// Merge the props with the default props
+	const mergedProps = {...defaultProps, ...props};
+
+	// Set the local variables
+	const canvasVideoBufferRef = useRef<HTMLCanvasElement>(null);
 	const [asciiText, setAsciiText] = useState('');
 
 	// UseEffect to calculate the font size and set the resize observer (to resize the canvas and the font size, when the parent element is resized)
 	useEffect(() => {
-		calculateAndSetFontSize(preTagRef.current!, props.charsPerLine, props.charsPerColumn, props.parentRef.current!.clientWidth, props.parentRef.current!.clientHeight);
+		calculateAndSetFontSize(mergedProps.preTagRef.current!, mergedProps.charsPerLine, mergedProps.charsPerColumn, mergedProps.parentRef.current!.clientWidth, mergedProps.parentRef.current!.clientHeight);
 
 		// Set a resize observer to the parent element to resize the canvas and the font size
 		const resizeObserver = new ResizeObserver(entries => {
 			const {width, height} = entries[0].contentRect;
-			calculateAndSetFontSize(preTagRef.current!, props.charsPerLine, props.charsPerColumn, width, height);
+			calculateAndSetFontSize(mergedProps.preTagRef.current!, mergedProps.charsPerLine, mergedProps.charsPerColumn, width, height);
 		});
-		if (props.parentRef.current) {
-			resizeObserver.observe(props.parentRef.current);
+		if (mergedProps.parentRef.current) {
+			resizeObserver.observe(mergedProps.parentRef.current);
 		}
 
 		drawAsciiArt();
@@ -52,16 +57,16 @@ export const ImageAscii = (props: Props) => {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [props.image, props.parentRef, props.charsPerLine, props.charsPerColumn, props.artType]);
+	}, [mergedProps.image, mergedProps.parentRef, mergedProps.charsPerLine, mergedProps.charsPerColumn, mergedProps.artType]);
 
 	const drawAsciiArt = () => {
 		const canvas = canvasVideoBufferRef.current!;
 		const context = canvas.getContext('2d', {willReadFrequently: true})!;
 
-		context.drawImage(props.image, 0, 0, canvas.width, canvas.height);
+		context.drawImage(mergedProps.image, 0, 0, canvas.width, canvas.height);
 		const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
-		switch (props.artType) {
+		switch (mergedProps.artType) {
 			case ArtTypeEnum.ASCII:
 				setAsciiText(getAsciiFromImage(imageData, asciiChars));
 				break;
@@ -70,8 +75,10 @@ export const ImageAscii = (props: Props) => {
 				break;
 			case ArtTypeEnum.ASCII_COLOR_BG_IMAGE:
 				setAsciiText(getAsciiFromImage(imageData, asciiChars));
-				preTagRef.current!.style.backgroundImage = `url(${canvasImgToUrl(canvas).src})`;
-				// preTagRef.current!.style.backgroundImage = `url(${props.imageSrc})`;
+				// Set the background image of the pre tag to the resized canvas
+				mergedProps.preTagRef.current!.style.backgroundImage = `url(${canvasImgToUrl(canvas).src})`;
+				// // Set the background image of the pre tag to the original dimensions video
+				// mergedmergedProps.preTagRef.current!.style.backgroundImage = `url(${videoImgToUrl(mergedProps.videoStreaming).src})`;
 				break;
 			default:
 				break;
@@ -80,27 +87,26 @@ export const ImageAscii = (props: Props) => {
 
 	return (
 		<div style={{
-			backgroundColor: props.backgroundColor,
+			backgroundColor: mergedProps.backgroundColor,
 			padding: 0, margin: 0, display: 'flex', justifyContent: 'center',
 			alignItems: 'center', width: '100%', height: '100%',
 		}}>
-			{/* <img src={props.imageSrc} ref={imageRef} alt='image' onLoad={drawAsciiArt} style={{display: 'none'}}/> */}
 			<canvas ref={canvasVideoBufferRef} width={props.charsPerLine} height={props.charsPerColumn}
 				style={{display: 'none'}}
 			/>
 			{
 				(() => {
-					switch (props.artType) {
+					switch (mergedProps.artType) {
 						case ArtTypeEnum.ASCII:
 							return (
-								<pre ref={preTagRef} style={{
-									backgroundColor: props.backgroundColor,
-									color: props.fontColor,
+								<pre ref={mergedProps.preTagRef} style={{
+									backgroundColor: mergedProps.backgroundColor,
+									color: mergedProps.fontColor,
 									padding: 0,
 									margin: 0,
 									letterSpacing: `${lineSpacing}em`,
 									lineHeight: `${lineHeight}em`,
-									transform: `scaleX(${flipY ? -1 : 1})`,
+									transform: `scaleX(${mergedProps.flipY ? -1 : 1})`,
 									overflow: 'hidden',
 								}}>
 									{asciiText}
@@ -108,15 +114,15 @@ export const ImageAscii = (props: Props) => {
 							);
 						case ArtTypeEnum.ASCII_COLOR:
 							return (
-								<pre ref={preTagRef} dangerouslySetInnerHTML={{__html: asciiText}}
+								<pre ref={mergedProps.preTagRef} dangerouslySetInnerHTML={{__html: asciiText}}
 									style={{
-										backgroundColor: props.backgroundColor,
-										color: props.fontColor,
+										backgroundColor: mergedProps.backgroundColor,
+										color: mergedProps.fontColor,
 										padding: 0,
 										margin: 0,
 										letterSpacing: `${lineSpacing}em`,
 										lineHeight: `${lineHeight}em`,
-										transform: `scaleX(${flipY ? -1 : 1})`,
+										transform: `scaleX(${mergedProps.flipY ? -1 : 1})`,
 										overflow: 'hidden',
 									}}
 								></pre>
@@ -132,7 +138,7 @@ export const ImageAscii = (props: Props) => {
                                         might think that the change of pre tag is an update not a replace
                                          */
 									}
-									<pre ref={preTagRef} style={{
+									<pre ref={mergedProps.preTagRef} style={{
 										padding: 0,
 										margin: 0,
 										letterSpacing: `${lineSpacing}em`,
@@ -141,9 +147,8 @@ export const ImageAscii = (props: Props) => {
 										backgroundClip: 'text',
 										WebkitBackgroundClip: 'text',
 										color: 'transparent',
-										transform: `scaleX(${flipY ? -1 : 1})`,
+										transform: `scaleX(${mergedProps.flipY ? -1 : 1})`,
 										overflow: 'hidden',
-										// backgroundImage: `url(${props.videoStreaming.src})`,
 									}}>
 										{asciiText}
 									</pre>
