@@ -91,7 +91,7 @@ export const ImageAscii = (props: Props) => {
 			padding: 0, margin: 0, display: 'flex', justifyContent: 'center',
 			alignItems: 'center', width: '100%', height: '100%',
 		}}>
-			<canvas ref={canvasVideoBufferRef} width={props.charsPerLine} height={props.charsPerColumn}
+			<canvas ref={canvasVideoBufferRef} width={mergedProps.charsPerLine} height={mergedProps.charsPerColumn}
 				style={{display: 'none'}}
 			/>
 			{
